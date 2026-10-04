@@ -1,0 +1,45 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      # Chỉ chạy lần đầu, khi volume còn trống. Bucket được tạo là iot_raw (giữ 7 ngày).
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUX_USER:?Thiếu INFLUX_USER trong .env}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUX_PASSWORD:?Thiếu INFLUX_PASSWORD trong .env}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUX_ORG:?Thiếu INFLUX_ORG trong .env}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUX_BUCKET_RAW:-iot_raw}
+      DOCKER_INFLUXDB_INIT_RETENTION: 7d
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUX_TOKEN:?Thiếu INFLUX_TOKEN trong .env}
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  # Chạy một lần để tạo bucket iot_clean (giữ 30 ngày), chạy lại không gây lỗi.
+  influx-init:
+    image: influxdb:2.7
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      INFLUX_HOST: http://influxdb:8086
+      INFLUX_ORG: ${INFLUX_ORG}
+      INFLUX_TOKEN: ${INFLUX_TOKEN}
+      BUCKET_CLEAN: ${INFLUX_BUCKET_CLEAN:-iot_clean}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - 'influx bucket list --name "$$BUCKET_CLEAN" > /dev/null 2>&1 || influx bucket create --name "$$BUCKET_CLEAN" --retention 30d'
+
+volumes:
+  influxdb-data:
+  influxdb-config:
