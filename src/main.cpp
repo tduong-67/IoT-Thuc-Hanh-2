@@ -16,7 +16,7 @@ const char* WIFI_PASS = "";
 const char* MQTT_HOST = "7a9e69279ef9407abe4cfc49fa07539e.s1.eu.hivemq.cloud";
 const int   MQTT_PORT = 8883;
 const char* MQTT_USER = "Duong067";
-const char* MQTT_PASS = "dtduong067@";
+const char* MQTT_PASS = "123456";
 
 const char* DEVICE_ID = "esp32-01";
 const char* TOPIC     = "iot/lab2/esp32-01/telemetry";

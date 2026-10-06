@@ -1,4 +1,3 @@
-"""Kiểm soát chất lượng luồng dữ liệu: loại bản tin trùng và đếm bản tin mất."""
 
 from collections import OrderedDict
 from dataclasses import dataclass

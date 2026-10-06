@@ -1,4 +1,5 @@
 
+
 from __future__ import annotations
 
 import argparse
@@ -39,7 +40,10 @@ CLEAN_COLUMNS = [
 ]
 OUTLIER_COLUMNS = ["time", "device_id", "variable", "value"]
 
-=================================
+
+# ======================================================================
+# Phần tính toán thuần (không đụng tới DB)
+# ======================================================================
 @dataclass
 class PreprocessResult:
     clean: pd.DataFrame  # index = thời điểm bắt đầu cửa sổ (UTC); cột theo CLEAN_COLUMNS

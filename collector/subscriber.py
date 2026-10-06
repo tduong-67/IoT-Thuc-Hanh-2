@@ -1,12 +1,4 @@
-"""Collector: nhận telemetry từ MQTT, kiểm tra, rồi ghi vào InfluxDB.
 
-Luồng xử lý mỗi bản tin:
-    parse_payload (validate) -> Deduper (loại trùng) -> GapTracker (đếm mất gói)
-    -> ghi measurement `environment`, `latency` vào bucket iot_raw.
-Cứ 30 giây ghi thêm bộ đếm tích lũy vào measurement `pipeline_stats`.
-
-Chạy:  python collector\\subscriber.py
-"""
 
 from __future__ import annotations
 
